@@ -50,7 +50,11 @@ export class AuthService {
       });
 
       // Sign a JWT token using the user's ID
-      const token = await this.jwtService.signAsync({ id: user._id });
+      const token = await this.jwtService.signAsync({
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      });
 
       return { token };
     } catch (err) {
@@ -89,7 +93,11 @@ export class AuthService {
     }
 
     // Sign a JWT token if the password is correct
-    const token = await this.jwtService.signAsync({ id: user._id });
+    const token = await this.jwtService.signAsync({
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    });
 
     return { token };
   }
