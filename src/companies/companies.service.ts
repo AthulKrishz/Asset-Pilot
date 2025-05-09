@@ -5,6 +5,8 @@ import { Company } from './schemas/company.schema';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { User } from 'src/user/schemas/user.schema';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class CompaniesService {
@@ -13,6 +15,7 @@ export class CompaniesService {
     private companyModel: Model<Company>,
     @InjectModel(User.name)
     private userModel: Model<User>,
+    private readonly mailService: MailerService,
   ) {}
   async create(createCompanyDto: CreateCompanyDto, userId: string) {
     const {
@@ -39,6 +42,10 @@ export class CompaniesService {
     // Step 3: Hash the company admin password
     const hashedPassword: string = await bcrypt.hash(companyAdminPassword, 10);
 
+    //Generate Otp
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
     // Step 4: Create company admin user and associate it with the company
     const companyAdminUser = await this.userModel.create({
       name: companyAdminName,
@@ -46,10 +53,23 @@ export class CompaniesService {
       password: hashedPassword,
       role: 'CompanyAdmin',
       companyid: company._id, // reference to the new company
+      isVerified: false,
+      otp,
+      otpExpires,
+    });
+    await this.mailService.sendMail({
+      to: companyAdminEmail,
+      subject: 'AssetPilot - Verify Your Email',
+      template: './otp',
+      context: {
+        name: companyAdminName,
+        otp,
+      },
     });
 
     return {
-      message: 'Company and Company Admin created successfully',
+      message:
+        'Company and Company Admin created successfully. Verification OTP sent to email',
       company,
       companyAdminUser,
     };

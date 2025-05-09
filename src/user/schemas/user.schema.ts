@@ -26,6 +26,15 @@ export class User {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Company', default: null })
   companyid: mongoose.Types.ObjectId;
+
+  @Prop({ default: null })
+  isVerified: boolean;
+
+  @Prop({ type: String, default: null })
+  otp: string | null;
+
+  @Prop({ type: Date, default: null })
+  otpExpires: Date | null;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
