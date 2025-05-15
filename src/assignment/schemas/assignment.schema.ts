@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { Company } from 'src/companies/schemas/company.schema';
 import { Item } from 'src/items/schemas/item.schema';
 import { User } from 'src/user/schemas/user.schema';
+
+export type AssignmentDocument = Assignment & Document;
 
 @Schema({ timestamps: true })
 export class Assignment {
@@ -22,7 +24,7 @@ export class Assignment {
   })
   companyId: Company;
 
-  @Prop({ type: Date, required: true })
+  @Prop({ type: Date, default: Date.now })
   assignedAt: Date;
 
   @Prop({ type: Date })

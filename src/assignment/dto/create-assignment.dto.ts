@@ -8,10 +8,7 @@ export class CreateAssignmentDto {
   assignedTo: string;
 
   @IsMongoId()
-  assignedBy: string;
-
-  @IsMongoId()
-  company: string;
+  companyId: string;
 
   @IsDateString()
   assignedAt: string;
