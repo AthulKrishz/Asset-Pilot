@@ -44,4 +44,9 @@ export class UserController {
   async verifyOtp(@Body() body: { email: string; otp: string }) {
     return this.userService.verifyOtp(body.email, body.otp);
   }
+
+  @Post('resend-otp')
+  async resentOtp(@Body('email') email: string) {
+    return this.userService.resentOtp(email);
+  }
 }

@@ -85,6 +85,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    //To check the Company Admin is verified
+    if (user.role === 'CompanyAdmin' && !user.isVerified) {
+      throw new UnauthorizedException(
+        'Email not verified. Please verify your email before logging in.',
+      );
+    }
+
     // Compare the provided password with the hashed password in the DB
     const isPasswordMatched: boolean = await bcrypt.compare(password, user.password);
 

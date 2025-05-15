@@ -9,9 +9,10 @@ import { CompaniesModule } from './companies/companies.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-
-const templatePath = join(__dirname, '..', 'templates');
-console.log('Email Template Path:', templatePath);
+import { ItemsModule } from './items/items.module';
+import { ItemTypeModule } from './item-type/item-type.module';
+import { BrandModule } from './brand/brand.module';
+import { AssignmentModule } from './assignment/assignment.module';
 
 @Module({
   imports: [
@@ -42,6 +43,10 @@ console.log('Email Template Path:', templatePath);
     UserModule,
     AuthModule,
     CompaniesModule,
+    ItemsModule,
+    ItemTypeModule,
+    BrandModule,
+    AssignmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

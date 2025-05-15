@@ -31,10 +31,16 @@ export class User {
   isVerified: boolean;
 
   @Prop({ type: String, default: null })
-  otp: string | null;
+  otp?: string | null;
 
   @Prop({ type: Date, default: null })
-  otpExpires: Date | null;
+  otpExpires?: Date | null;
+
+  @Prop({ type: Date, default: null })
+  otpSendAt?: Date | null;
+
+  @Prop({ type: Number, default: 0 })
+  otpResendCount?: number | null;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

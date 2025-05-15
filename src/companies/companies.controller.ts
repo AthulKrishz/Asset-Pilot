@@ -23,6 +23,7 @@ export class CompaniesController {
     return this.companieService.create(dto, req.user.userId);
   }
   @Get()
+  @Roles(Role.SuperAdmin, Role.Admin)
   findAll() {
     return this.companieService.findAll();
   }
