@@ -7,7 +7,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 import { User } from 'src/user/schemas/user.schema';
 import { SignUpDto } from './dto/signup.dto';
@@ -93,7 +93,10 @@ export class AuthService {
     }
 
     // Compare the provided password with the hashed password in the DB
-    const isPasswordMatched: boolean = await bcrypt.compare(password, user.password);
+    const isPasswordMatched: boolean = await bcrypt.compare(
+      password,
+      user.password,
+    );
 
     if (!isPasswordMatched) {
       throw new UnauthorizedException('Invalid email or password');
@@ -104,6 +107,7 @@ export class AuthService {
       id: user._id,
       email: user.email,
       role: user.role,
+      companyId: user.companyId ?? null,
     });
 
     return { token };

@@ -47,14 +47,16 @@ export class AssignmentService {
 
     return assignment;
   }
-  async unassignItem(unassignitemDto: UnassignItemDto): Promise<Assignment> {
+  async unassignItem(unassignItemDto: UnassignItemDto): Promise<Assignment> {
     const assignment = await this.assignmentModel.findById(
-      unassignitemDto.assignedId,
+      unassignItemDto.assignedId,
     );
 
     if (!assignment) throw new NotFoundException('Assignment Not Found');
 
-    assignment.unassignedAt = new Date(unassignitemDto.unassignedAt);
+    assignment.unassignedAt = unassignItemDto.unassignedAt
+      ? new Date(unassignItemDto.unassignedAt)
+      : new Date();
     await assignment.save();
 
     await this.itemModel.findByIdAndUpdate(assignment.item, {

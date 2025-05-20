@@ -2,8 +2,11 @@
 import { Role } from '@common/enums/role.enum';
 import {
   IsEmail,
+  IsEnum,
   IsIn,
+  IsMongoId,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MinLength,
 } from 'class-validator';
@@ -22,5 +25,10 @@ export class CreateUserDto {
   password: string;
 
   @IsIn(Object.values(Role))
-  role: string;
+  @IsEnum(Role, { message: 'Invalid role' })
+  role: Role;
+
+  @IsOptional()
+  @IsMongoId({ message: 'Invalid companyId' })
+  companyId?: string;
 }

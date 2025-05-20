@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Company } from './schemas/company.schema';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { User } from 'src/user/schemas/user.schema';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
 
@@ -52,7 +52,7 @@ export class CompaniesService {
       email: companyAdminEmail,
       password: hashedPassword,
       role: 'CompanyAdmin',
-      companyid: company._id, // reference to the new company
+      companyId: company._id, // reference to the new company
       isVerified: false,
       otp,
       otpExpires,

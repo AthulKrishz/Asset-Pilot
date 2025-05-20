@@ -25,7 +25,7 @@ export class User {
   role: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Company', default: null })
-  companyid: mongoose.Types.ObjectId;
+  companyId: mongoose.Types.ObjectId;
 
   @Prop({ default: null })
   isVerified: boolean;

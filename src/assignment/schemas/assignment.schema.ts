@@ -30,7 +30,7 @@ export class Assignment {
   @Prop({ type: Date })
   assignedTill?: Date;
 
-  @Prop({ type: Date })
+  @Prop({ type: Date, default: Date.now })
   unassignedAt?: Date;
 }
 
