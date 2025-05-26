@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Company } from './schemas/company.schema';
@@ -7,6 +11,7 @@ import { User } from 'src/user/schemas/user.schema';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
 export class CompaniesService {
@@ -76,5 +81,32 @@ export class CompaniesService {
   }
   async findAll(): Promise<Company[]> {
     return this.companyModel.find();
+  }
+
+  async findOne(id: string) {
+    return this.companyModel.findById(id);
+  }
+
+  async update(id: string, updateCompanyDto: UpdateCompanyDto) {
+    return this.companyModel.findByIdAndUpdate(id, updateCompanyDto, {
+      new: true,
+    });
+  }
+
+  async remove(id: string) {
+    return this.companyModel.findByIdAndDelete(id);
+  }
+
+  async updateStatus(id: string, status: number): Promise<{ message: string }> {
+    const currentCompany = await this.companyModel.findById(id);
+
+    if (!currentCompany) throw new NotFoundException('Company not found');
+
+    currentCompany.status = status;
+    await currentCompany.save();
+
+    return {
+      message: `Company status updated to ${status === 1 ? 'enabled' : 'disabled'}`,
+    };
   }
 }

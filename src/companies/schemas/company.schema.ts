@@ -11,6 +11,9 @@ export class Company extends Document {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   createdBy: mongoose.Types.ObjectId;
+
+  @Prop({ type: Number, default: 1 })
+  status: number;
 }
 
 export const CompanySchema = SchemaFactory.createForClass(Company);

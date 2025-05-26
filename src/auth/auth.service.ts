@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   ConflictException,
   InternalServerErrorException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -100,6 +101,10 @@ export class AuthService {
 
     if (!isPasswordMatched) {
       throw new UnauthorizedException('Invalid email or password');
+    }
+
+    if (user.status === 0) {
+      throw new ForbiddenException('User is disabled. Contact administrator.');
     }
 
     // Sign a JWT token if the password is correct

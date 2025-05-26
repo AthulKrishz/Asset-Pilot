@@ -99,4 +99,19 @@ export class UserController {
   async resentOtp(@Body('email') email: string) {
     return this.userService.resentOtp(email);
   }
+
+  @Patch(':id/status')
+  @Roles(Role.SuperAdmin, Role.Admin, Role.CompanyAdmin, Role.Manager)
+  updateStatus(
+    @Param('id') id: string,
+    @Body('status') status: number,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.userService.updateStatus(id, status, {
+      id: req.user.id,
+      name: req.user.name,
+      role: req.user.role as Role,
+      companyId: req.user.companyId,
+    });
+  }
 }

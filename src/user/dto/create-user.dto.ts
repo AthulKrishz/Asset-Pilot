@@ -6,6 +6,7 @@ import {
   IsIn,
   IsMongoId,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   MinLength,
@@ -31,4 +32,7 @@ export class CreateUserDto {
   @IsOptional()
   @IsMongoId({ message: 'Invalid companyId' })
   companyId?: string;
+
+  @IsNumber()
+  status: number;
 }

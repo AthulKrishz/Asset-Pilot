@@ -295,4 +295,27 @@ export class UserService {
 
     return { message: 'New OTP sent to your email' };
   }
+
+  async updateStatus(
+    id: string,
+    status: number,
+    currentUser: CurrentUser,
+  ): Promise<{ message: string }> {
+    const targetUser = await this.userModel.findById(id);
+
+    if (!targetUser) throw new NotFoundException('User not found');
+
+    if (!canAccess(currentUser.role, targetUser.role as Role)) {
+      throw new BadRequestException(
+        `Access denied: ${currentUser.role} cannot update status of ${targetUser.role}`,
+      );
+    }
+
+    targetUser.status = status;
+    await targetUser.save();
+
+    return {
+      message: `User status updated to ${status === 1 ? 'enabled' : 'disabled'}`,
+    };
+  }
 }

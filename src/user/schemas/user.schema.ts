@@ -41,6 +41,9 @@ export class User {
 
   @Prop({ type: Number, default: 0 })
   otpResendCount?: number | null;
+
+  @Prop({ type: Number, default: 1 })
+  status: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
