@@ -9,7 +9,7 @@ export class Company extends Document {
   @Prop({ required: true })
   address: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   createdBy: mongoose.Types.ObjectId;
 
   @Prop({ type: Number, default: 1 })

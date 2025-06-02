@@ -14,6 +14,7 @@ import { Roles } from '@common/decorators/role.decorator';
 import { Role } from '@common/enums/role.enum';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UnassignItemDto } from './dto/unassign-item.dto';
+import { RequestWithUser } from '@common/interfaces/request-with-user.interface';
 
 @Controller('assignment')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -24,9 +25,9 @@ export class AssignmentController {
   @Post()
   createAssignment(
     @Body() createAssignmentDto: CreateAssignmentDto,
-    @Request() req,
+    @Request() req: RequestWithUser,
   ) {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     return this.assignmentSerivice.createAssignment(
       createAssignmentDto,
       userId,

@@ -17,6 +17,7 @@ import { Roles } from '@common/decorators/role.decorator';
 import { Role } from '@common/enums/role.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RequestWithUser } from '@common/interfaces/request-with-user.interface';
+import { Public } from '@common/decorators/public.decorator';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -90,11 +91,13 @@ export class UserController {
     });
   }
 
+  @Public() //Used to override the existing guards
   @Post('verify-otp')
   async verifyOtp(@Body() body: { email: string; otp: string }) {
     return this.userService.verifyOtp(body.email, body.otp);
   }
 
+  @Public() //Used to override the existing guards
   @Post('resend-otp')
   async resentOtp(@Body('email') email: string) {
     return this.userService.resentOtp(email);

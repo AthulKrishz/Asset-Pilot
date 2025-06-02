@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   Injectable,
   UnauthorizedException,
@@ -6,13 +7,18 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 
 import { User } from 'src/user/schemas/user.schema';
 import { SignUpDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { Company } from 'src/companies/schemas/company.schema';
+
+type UserWithCompany = HydratedDocument<User> & {
+  companyId: Company | null;
+};
 
 @Injectable()
 export class AuthService {
@@ -79,21 +85,26 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<{ token: string }> {
     const { email, password } = loginDto;
 
-    // Find the user by email
-    const user = await this.userModel.findOne({ email });
+    // Single query with populate
+    const rawUser = await this.userModel
+      .findOne({ email })
+      .populate('companyId');
 
-    if (!user) {
+    if (!rawUser) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    //To check the Company Admin is verified
+    // Cast to type-safe version
+    const user = rawUser as unknown as UserWithCompany;
+
+    // Email verification check for CompanyAdmin
     if (user.role === 'CompanyAdmin' && !user.isVerified) {
       throw new UnauthorizedException(
         'Email not verified. Please verify your email before logging in.',
       );
     }
 
-    // Compare the provided password with the hashed password in the DB
+    // Check password
     const isPasswordMatched: boolean = await bcrypt.compare(
       password,
       user.password,
@@ -103,16 +114,30 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    //  Check if user is disabled
     if (user.status === 0) {
       throw new ForbiddenException('User is disabled. Contact administrator.');
     }
 
-    // Sign a JWT token if the password is correct
+    // Check if user's company is disabled (only for non-admins)
+    if (
+      user.role !== 'SuperAdmin' &&
+      user.role !== 'Admin' &&
+      user.companyId &&
+      user.companyId.status === 0
+    ) {
+      throw new UnauthorizedException(
+        'Your company is disabled. Please contact the administrator.',
+      );
+    }
+
+    // Sign JWT
     const token = await this.jwtService.signAsync({
       id: user._id,
+      name: user.name,
       email: user.email,
       role: user.role,
-      companyId: user.companyId ?? null,
+      companyId: user.companyId?._id ?? null,
     });
 
     return { token };

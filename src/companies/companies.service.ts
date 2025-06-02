@@ -100,7 +100,7 @@ export class CompaniesService {
   async updateStatus(id: string, status: number): Promise<{ message: string }> {
     const currentCompany = await this.companyModel.findById(id);
 
-    if (!currentCompany) throw new NotFoundException('Company not found');
+    if (!currentCompany) throw new NotFoundException('User not found');
 
     currentCompany.status = status;
     await currentCompany.save();

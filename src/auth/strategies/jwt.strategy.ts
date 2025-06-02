@@ -6,6 +6,7 @@ import { Role } from '@common/enums/role.enum';
 
 interface JwtPayload {
   id: string;
+  name: string;
   email: string;
   role: string;
   companyId?: string;
@@ -23,7 +24,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // eslint-disable-next-line @typescript-eslint/require-await
   async validate(payload: JwtPayload) {
     return {
-      userId: payload.id,
+      id: payload.id,
+      name: payload.name,
       email: payload.email,
       role: payload.role as Role,
       companyId: payload.companyId || null,
